@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>统觉心理测验</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+            background-color: #f4f4f9; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .app-container { 
+            background: #fff; 
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
+            max-width: 600px; 
+            width: 100%; 
+            text-align: center; 
+        }
+        h1 { color: #333; font-size: 24px; margin-bottom: 10px; }
+        p.desc { color: #666; font-size: 14px; margin-bottom: 30px; }
+        .question-img { 
+            width: 100%; 
+            max-height: 350px; 
+            object-fit: contain; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            background-color: #eee;
+        }
+        .question-text { 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-bottom: 25px; 
+            color: #222; 
+        }
+        .options-grid { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+        }
+        .btn { 
+            padding: 14px 20px; 
+            border: none; 
+            border-radius: 8px; 
+            background-color: #4a90e2; 
+            color: white; 
+            font-size: 16px; 
+            cursor: pointer; 
+            transition: background-color 0.2s; 
+        }
+        .btn:hover { background-color: #357abd; }
+        
+        /* 信息填写区域样式 */
+        #info-area { text-align: left; }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus {
+            border-color: #4a90e2;
+        }
+        .form-group .hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 6px;
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        /* 结果页面样式 */
+        #result-area { display: none; text-align: left; }
+        .score-badge { 
+            display: inline-block; 
+            padding: 6px 16px; 
+            background: #e8f0fe; 
+            color: #4a90e2; 
+            border-radius: 20px; 
+            font-size: 14px; 
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .result-text { 
+            font-size: 18px; 
+            line-height: 1.6; 
+            color: #333; 
+            margin-bottom: 30px;
+        }
+        .user-info-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        .footer-note {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- 信息填写区域 -->
+    <div id="info-area">
+        <h1>统觉心理测验</h1>
+        <p class="desc">请先填写以下基本信息，再开始测验：</p>
+        
+        <div class="form-group">
+            <label for="input-name">姓名</label>
+            <input type="text" id="input-name" placeholder="请输入你的姓名">
+        </div>
+        
+        <div class="form-group">
+            <label for="input-student-id">学号</label>
+            <input type="text" id="input-student-id" placeholder="请输入你的学号">
+        </div>
+        
+        <div class="form-group">
+            <label for="input-phone">手机号后四位</label>
+            <input type="text" id="input-phone" placeholder="请输入手机号后四位" maxlength="4">
+            <div class="hint">仅需填写后四位，用于身份核对</div>
+        </div>
+        
+        <div id="form-error" class="error-msg"></div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn" onclick="startTest()" style="width: 100%;">开始测验</button>
+        </div>
+    </div>
+
+    <!-- 答题区域 -->
+    <div id="question-area" style="display: none;">
+        <div style="font-size: 14px; color: #999; margin-bottom: 10px;">题目 <span id="current-step">1</span> / <span id="total-step">7</span></div>
+        <img id="q-img" class="question-img" src="" alt="统觉测验题目">
+        <div id="q-text" class="question-text"></div>
+        <div id="options-container" class="options-grid"></div>
+    </div>
+
+    <!-- 结果区域 -->
+    <div id="result-area">
+        <h1>测验结果</h1>
+        <div id="user-info-display" class="user-info-display"></div>
+        <p class="desc">根据你的选择，系统为你生成了专属的人格画像：</p>
+        <div id="score-display" class="score-badge"></div>
+        <div id="result-desc" class="result-text"></div>
+        <div style="text-align: center;">
+            <button class="btn" onclick="location.reload()">重新测试</button>
+        </div>
+    </div>
+    
+    <div class="footer-note">本测验仅供娱乐参考，不构成专业心理诊断。</div>
+</div>
+
+<script>
+    // 用户信息存储
+    let userInfo = {
+        name: '',
+        studentId: '',
+        phoneLast4: ''
+    };
+
+    // 1. 数据结构：将你的题目、图片路径和选项存入这里
+    const questions = [
+        {
+            text: "1. 图中女子正打开房门，她打算做什么？",
+            imgSrc: "./images/q1.png", 
+            options: [
+                { text: "A. 男朋友房间，她一直很想看看房间里面的陈设布局", score: 1 },
+                { text: "B. 下班刚刚回家", score: 2 },
+                { text: "C. 拿下东西，然后回厨房做饭", score: 3 }
+            ]
+        },
+        {
+            text: "2. 图中女人为何掩面，她的情绪是什么样的？",
+            imgSrc: "./images/q2.png",
+            options: [
+                { text: "A. 悲伤，她发现丈夫有婚外情", score: 1 },
+                { text: "B. 忧虑，丈夫醉酒在床", score: 2 },
+                { text: "C. 关心，丈夫重病卧床，快要去世了", score: 3 }
+            ]
+        },
+        {
+            text: "3. 床上女子状态如何？",
+            imgSrc: "./images/q3.png",
+            options: [
+                { text: "A. 身患重病", score: 1 },
+                { text: "B. 沉睡", score: 2 },
+                { text: "C. 已去世", score: 3 }
+            ]
+        },
+        {
+            text: "4. 图中带领结的男人跟女人是什么关系？",
+            imgSrc: "./images/q4.png",
+            options: [
+                { text: "A. 地下情人", score: 1 },
+                { text: "B. 老板或上司", score: 2 },
+                { text: "C. 对她有帮助的有权有势的人", score: 3 }
+            ]
+        },
+        {
+            text: "5. 图中老妇人眼神流露出什么情绪？",
+            imgSrc: "./images/q5.png",
+            options: [
+                { text: "A. 邪恶，他们直接有冲突", score: 1 },
+                { text: "B. 同情", score: 2 },
+                { text: "C. 焦虑及关心", score: 3 }
+            ]
+        },
+        {
+            text: "6. 图中女人为什么化妆？",
+            imgSrc: "./images/q6.png",
+            options: [
+                { text: "A. 遮掩衰老面容，并希望拯救婚姻危机", score: 1 },
+                { text: "B. 以更加饱满精神状态去见大客户", score: 2 },
+                { text: "C. 准备与男朋友约会", score: 3 }
+            ]
+        },
+        {
+            text: "7. 图中的人物为什么打扮成这样？",
+            imgSrc: "./images/q7.png",
+            options: [
+                { text: "A. 打扮成不能辨认的恐怖样子去袭击仇人", score: 1 },
+                { text: "B. 抢劫商店", score: 2 },
+                { text: "C. 参加万圣节假日假面舞会", score: 3 }
+            ]
+        }
+    ];
+
+    // 2. 计分与解析规则
+    function getPersonalityAnalysis(totalScore) {
+        if (totalScore >= 7 && totalScore <= 11) {
+            return "你善于隐藏自己，大家不知道你心理的想法，防御心较重，不太信心别人，更愿意独处。";
+        } else if (totalScore >= 12 && totalScore <= 16) {
+            return "你是现实主义者，缺乏浪漫情调，不善于人情世故，追求金钱，思维清晰，踏实而有执行力。";
+        } else if (totalScore >= 17 && totalScore <= 21) {
+            return "你性格开朗乐观，平易近人，能为他人着想，能获得大家信任，做事情慎重。";
+        } else {
+            return "你的分数有些特殊，建议重新核对选项。";
+        }
+    }
+
+    // 3. 核心交互逻辑
+    let currentQuestionIndex = 0;
+    let totalScore = 0;
+
+    const infoArea = document.getElementById('info-area');
+    const questionArea = document.getElementById('question-area');
+    const resultArea = document.getElementById('result-area');
+    const qImg = document.getElementById('q-img');
+    const qText = document.getElementById('q-text');
+    const optionsContainer = document.getElementById('options-container');
+    const currentStep = document.getElementById('current-step');
+    const totalStep = document.getElementById('total-step');
+    const formError = document.getElementById('form-error');
+
+    // 开始测验：验证信息并进入答题
+    function startTest() {
+        const name = document.getElementById('input-name').value.trim();
+        const studentId = document.getElementById('input-student-id').value.trim();
+        const phoneLast4 = document.getElementById('input-phone').value.trim();
+
+        // 简单校验
+        if (!name) {
+            showError('请输入姓名');
+            return;
+        }
+        if (!studentId) {
+            showError('请输入学号');
+            return;
+        }
+        if (!phoneLast4 || phoneLast4.length !== 4 || !/^\d{4}$/.test(phoneLast4)) {
+            showError('请输入正确的手机号后四位（4位数字）');
+            return;
+        }
+
+        // 保存信息
+        userInfo.name = name;
+        userInfo.studentId = studentId;
+        userInfo.phoneLast4 = phoneLast4;
+
+        // 隐藏信息区，显示答题区
+        infoArea.style.display = 'none';
+        questionArea.style.display = 'block';
+        totalStep.innerText = questions.length;
+        loadQuestion();
+    }
+
+    function showError(msg) {
+        formError.innerText = msg;
+        formError.style.display = 'block';
+    }
+
+    function loadQuestion() {
+        const currentQ = questions[currentQuestionIndex];
+        currentStep.innerText = currentQuestionIndex + 1;
+        qImg.src = currentQ.imgSrc;
+        qText.innerText = currentQ.text;
+        
+        optionsContainer.innerHTML = '';
+        currentQ.options.forEach(option => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            btn.innerText = option.text;
+            btn.onclick = () => handleAnswer(option.score);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function handleAnswer(score) {
+        totalScore += score;
+        
+        if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        questionArea.style.display = 'none';
+        resultArea.style.display = 'block';
+
+        // 显示用户信息
+        document.getElementById('user-info-display').innerHTML = 
+            `<strong>姓名：</strong>${userInfo.name} &nbsp;|&nbsp; <strong>学号：</strong>${userInfo.studentId} &nbsp;|&nbsp; <strong>手机后四位：</strong>${userInfo.phoneLast4}`;
+        
+        document.getElementById('score-display').innerText = `最终得分：${totalScore} 分`;
+        document.getElementById('result-desc').innerText = getPersonalityAnalysis(totalScore);
+    }
+</script>
+
+</body>
+</html>
