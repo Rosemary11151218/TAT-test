@@ -192,11 +192,11 @@
         phoneLast4: ''
     };
 
-    // 1. 数据结构：将你的题目、图片路径和选项存入这里
+    // 1. 数据结构：题目与根目录下的图片路径已匹配
     const questions = [
         {
             text: "1. 图中女子正打开房门，她打算做什么？",
-            imgSrc: "./images/q1.png", 
+            imgSrc: "./q1.png", 
             options: [
                 { text: "A. 男朋友房间，她一直很想看看房间里面的陈设布局", score: 1 },
                 { text: "B. 下班刚刚回家", score: 2 },
@@ -205,7 +205,7 @@
         },
         {
             text: "2. 图中女人为何掩面，她的情绪是什么样的？",
-            imgSrc: "./images/q2.png",
+            imgSrc: "./q2.png",
             options: [
                 { text: "A. 悲伤，她发现丈夫有婚外情", score: 1 },
                 { text: "B. 忧虑，丈夫醉酒在床", score: 2 },
@@ -214,7 +214,7 @@
         },
         {
             text: "3. 床上女子状态如何？",
-            imgSrc: "./images/q3.png",
+            imgSrc: "./q3.png",
             options: [
                 { text: "A. 身患重病", score: 1 },
                 { text: "B. 沉睡", score: 2 },
@@ -223,7 +223,7 @@
         },
         {
             text: "4. 图中带领结的男人跟女人是什么关系？",
-            imgSrc: "./images/q4.png",
+            imgSrc: "./q4.png",
             options: [
                 { text: "A. 地下情人", score: 1 },
                 { text: "B. 老板或上司", score: 2 },
@@ -232,7 +232,7 @@
         },
         {
             text: "5. 图中老妇人眼神流露出什么情绪？",
-            imgSrc: "./images/q5.png",
+            imgSrc: "./q5.png",
             options: [
                 { text: "A. 邪恶，他们直接有冲突", score: 1 },
                 { text: "B. 同情", score: 2 },
@@ -241,7 +241,7 @@
         },
         {
             text: "6. 图中女人为什么化妆？",
-            imgSrc: "./images/q6.png",
+            imgSrc: "./q6.png",
             options: [
                 { text: "A. 遮掩衰老面容，并希望拯救婚姻危机", score: 1 },
                 { text: "B. 以更加饱满精神状态去见大客户", score: 2 },
@@ -250,7 +250,7 @@
         },
         {
             text: "7. 图中的人物为什么打扮成这样？",
-            imgSrc: "./images/q7.png",
+            imgSrc: "./q7.png",
             options: [
                 { text: "A. 打扮成不能辨认的恐怖样子去袭击仇人", score: 1 },
                 { text: "B. 抢劫商店", score: 2 },
