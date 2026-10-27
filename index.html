@@ -286,6 +286,14 @@
     const totalStep = document.getElementById('total-step');
     const formError = document.getElementById('form-error');
 
+    // 【优化】图片预加载函数：让图片在后台提前缓存
+    function preloadImages() {
+        questions.forEach(q => {
+            const img = new Image();
+            img.src = q.imgSrc;
+        });
+    }
+
     // 开始测验：验证信息并进入答题
     function startTest() {
         const name = document.getElementById('input-name').value.trim();
@@ -314,6 +322,10 @@
         // 隐藏信息区，显示答题区
         infoArea.style.display = 'none';
         questionArea.style.display = 'block';
+        
+        // 【优化】进入答题页前，执行图片预加载
+        preloadImages();
+        
         totalStep.innerText = questions.length;
         loadQuestion();
     }
